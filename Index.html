@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Site Downloader</title>
+
+<style>
+body {
+  background: #0b0b0b;
+  color: white;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.box {
+  background: #151515;
+  padding: 20px;
+  border-radius: 12px;
+  width: 330px;
+  box-shadow: 0 0 20px rgba(0,255,150,.2);
+}
+
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 12px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+}
+
+button {
+  background: #00ff99;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+</style>
+</head>
+
+<body>
+<div class="box">
+  <h2>📥 Baixar HTML do Site</h2>
+  <input id="url" placeholder="https://exemplo.com">
+  <button onclick="baixar()">Baixar</button>
+  <p id="status"></p>
+</div>
+
+<script>
+async function baixar() {
+  const url = document.getElementById("url").value;
+  const status = document.getElementById("status");
+  status.textContent = "";
+
+  if (!url.startsWith("http")) {
+    alert("Coloca o link completo com https://");
+    return;
+  }
+
+  try {
+    status.textContent = "⏳ Baixando...";
+
+    const proxy = "https://cors.isomorphic-git.org/";
+    const res = await fetch(proxy + url);
+
+    if (!res.ok) throw new Error("Falha no fetch");
+
+    const html = await res.text();
+
+    const blob = new Blob([html], { type: "text/html" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "site.html";
+    a.click();
+
+    status.textContent = "✅ Download concluído!";
+  } catch (e) {
+    status.textContent = "❌ Erro ao baixar o site";
+  }
+}
+</script>
+</body>
+</html>
